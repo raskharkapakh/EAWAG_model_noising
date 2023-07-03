@@ -206,16 +206,32 @@ extract.model.results <- function(model.name, all.results){
  
   model.results["model"] <- model.name
   
-  colnames(model.results) <- c("taxa",
-                               "prevalence",
-                               "taxonomic_level", 
-                               "dev_fit",
-                               "auc_fit",
-                               "dev_pred",
-                               "auc_pred",
-                               "likelihood_ratio",
-                               "auc_ratio",
-                               "model")
+  new.colnames <- c("taxa",
+                    "prevalence",
+                    "taxonomic_level", 
+                    "dev_fit",
+                    "auc_fit",
+                    "dev_pred",
+                    "auc_pred",
+                    "likelihood_ratio",
+                    "auc_ratio",
+                    "model")
+  
+  # if the desired model name is not find in the columns of all.results, an 
+  # empty dataframe is returned
+  if (length(model.results)!=length(new.colnames)){
+    
+    
+    
+    empty.df = data.frame(matrix(nrow=0,
+                                 ncol=length(new.colnames))) 
+    colnames(empty.df) = new.colnames
+    
+    return(empty.df)
+  }
+  
+  
+  colnames(model.results) <- new.colnames
   
   return(model.results)
 }

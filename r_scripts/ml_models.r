@@ -893,21 +893,24 @@ save.models <- function(models, path, split.type){
   
   if (split.type == "FIT"){
     
-    # extract ANN
-    ann <- models[["ann"]][["entire_dataset"]][["training"]][[1]][["model"]]
     
-    # replace ANN by 0 in models' list
-    taxa.list = names(models.copy[["ann"]][["entire_dataset"]][["training"]])
+    if (!is.null(models[["ann"]])){
     
-    for (taxon in taxa.list){
-      models.copy[["ann"]][["entire_dataset"]][["training"]][[taxon]][["model"]] <- 0
+      # extract ANN
+      ann <- models[["ann"]][["entire_dataset"]][["training"]][[1]][["model"]]
+      
+      # replace ANN by 0 in models' list
+      taxa.list = names(models.copy[["ann"]][["entire_dataset"]][["training"]])
+      
+      for (taxon in taxa.list){
+        models.copy[["ann"]][["entire_dataset"]][["training"]][[taxon]][["model"]] <- 0
+      }
+      
+      # save ANN to file
+      ann.path = paste0(path, "/ann_", split.type)
+      save_model_tf(ann, ann.path)
+    
     }
-    
-    # save ANN to file
-    ann.path = paste0(path, "/ann_", split.type)
-    save_model_tf(ann, ann.path)
-    
-    
     # save models list
     saveRDS(models.copy, file=models.path)
     
@@ -916,28 +919,31 @@ save.models <- function(models, path, split.type){
     # TODO
   }else if (split.type == "CV"){
     
-    split.names <- names(models.copy[[1]])
     
-    for (split in split.names){
-    
-      # extract ann of current split
-      current.ann <- models[["ann"]][[split]][["training"]][[1]][["model"]]
+    if (!is.null(models[["ann"]])){
+      split.names <- names(models.copy[[1]])
       
-      # for every split both in training and testing replace ann by 0
-      taxa.list = names(models.copy[["ann"]][[split]][["training"]])
+      for (split in split.names){
       
-      for (taxon in taxa.list){
-        models.copy[["ann"]][[split]][["training"]][[taxon]][["model"]] <- 0
-        models.copy[["ann"]][[split]][["testing"]][[taxon]][["model"]] <- 0
+        # extract ann of current split
+        current.ann <- models[["ann"]][[split]][["training"]][[1]][["model"]]
+        
+        # for every split both in training and testing replace ann by 0
+        taxa.list = names(models.copy[["ann"]][[split]][["training"]])
+        
+        for (taxon in taxa.list){
+          models.copy[["ann"]][[split]][["training"]][[taxon]][["model"]] <- 0
+          models.copy[["ann"]][[split]][["testing"]][[taxon]][["model"]] <- 0
+        }
+        
+        # save ann of current split
+        current.ann.path = paste0(path, "/ann_", split.type, "_", split)
+        
+        
+        save_model_tf(current.ann, current.ann.path)
+        
+        
       }
-      
-      # save ann of current split
-      current.ann.path = paste0(path, "/ann_", split.type, "_", split)
-      
-      
-      save_model_tf(current.ann, current.ann.path)
-      
-      
     }
     
     # save list of models
@@ -950,20 +956,24 @@ save.models <- function(models, path, split.type){
 load.models <- function(path, split.type){
   
   if (split.type=='FIT'){
-    ann.path = paste0(path, "/ann_", split.type)
+    
     models.path <- paste0(path, "/models_", split.type, ".rds")
+    models.list <- readRDS(file=models.path)  # load models' list
+
     
-    # load ann
-    ann <- load_model_tf(ann.path)
     
-    # load models' list
-    models.list <- readRDS(file=models.path)
     
-    # copy ann back in list
-    taxa.list = names(models.list[["ann"]][["entire_dataset"]][["training"]])
+    ann.path = paste0(path, "/ann_", split.type)
     
-    for (taxon in taxa.list){
-      models.list[["ann"]][["entire_dataset"]][["training"]][[taxon]][["model"]] <- ann
+    # load ann and copy it back in list if it exists
+    if(dir.exists(ann.path)){
+    
+      ann <- load_model_tf(ann.path)
+      taxa.list = names(models.list[["ann"]][["entire_dataset"]][["training"]])
+      
+      for (taxon in taxa.list){
+        models.list[["ann"]][["entire_dataset"]][["training"]][[taxon]][["model"]] <- ann
+      }
     }
     
     return(models.list)
@@ -979,18 +989,19 @@ load.models <- function(path, split.type){
     
     for (split in split.names){
       
-      # load ann model
       current.ann.path <- paste0(path, "/ann_", split.type, "_", split)
-      current.ann <- load_model_tf(current.ann.path)
       
-      # copy back current ANN in list
-      taxa.list = names(models.list[["ann"]][[split]][["training"]])
-      
-      for (taxon in taxa.list){
-        models.list[["ann"]][[split]][["training"]][[taxon]][["model"]] <- current.ann
-        models.list[["ann"]][[split]][["testing"]][[taxon]][["model"]]  <- current.ann
+      # load current split's ann model and copy it back in list if it exists
+      if(dir.exists(current.ann.path)){
+        
+        current.ann <- load_model_tf(current.ann.path)
+        taxa.list = names(models.list[["ann"]][[split]][["training"]])
+        
+        for (taxon in taxa.list){
+          models.list[["ann"]][[split]][["training"]][[taxon]][["model"]] <- current.ann
+          models.list[["ann"]][[split]][["testing"]][[taxon]][["model"]]  <- current.ann
+        }
       }
-      
     }
     
     return(models.list)

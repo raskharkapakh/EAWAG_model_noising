@@ -38,7 +38,6 @@ create.plots <- function(experiment.name="experiment_name",
                               header = T, 
                               sep = ",", 
                               stringsAsFactors = F)
-  dir.input.data          <- "../input_data/"
   dir.output              <- "../output_data/"
   dir.experiment          <- paste0(dir.output, experiment.name, "/")
   
