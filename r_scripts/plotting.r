@@ -155,7 +155,7 @@ create.plots <- function(experiment.name="experiment_name",
   
   pdf(paste0(dir.experiment, "fig2.pdf"))
   print(fig2)
-  dev.off()
+  dev.off() 
   
   pdf(paste0(dir.experiment, "fig3.pdf"))
   print(fig3)

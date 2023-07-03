@@ -79,7 +79,7 @@ prev.taxa       <- read.csv(paste0(dir.input, file.prev.taxa),
 env.fact.under.obs <- "temperature"
 taxon.under.obs <- "Occurrence.Gammaridae"
 
-multi.ice <- lapply(list.exp.miss, FUN=function(name){
+multi.ice <- lapply(list.exp.subset, FUN=function(name){
                      
   dir.experiment          <- paste0(dir.output, name, "/")
   
@@ -119,7 +119,7 @@ fig1 <- ggplot(data=final.multi.ice) +
 # Fig 2: multi box plot ----
 
 # somehow this function takes ~10 min to run
-multi.all.results <- lapply(list.exp.miss, FUN=function(name){
+multi.all.results <- lapply(list.exp.subset, FUN=function(name){
   
   dir.experiment <- paste0(dir.output, name, "/")
   models.cv      <- load.models(path=dir.experiment, split.type="CV")
@@ -137,9 +137,12 @@ multi.all.results <- lapply(list.exp.miss, FUN=function(name){
 
 final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
 
-fig2 <- ggplot(data=final.multi.all.results,
-       aes(x=column_label, y=dev)) +
-geom_boxplot(aes(fill=fit_pred)) +
+View(final.multi.all.results)
+
+ggplot(data=final.multi.all.results) +
+geom_boxplot(aes(x=reorder(column_label,dev, FUN=median),
+                 y=dev,
+                 fill=fit_pred)) +
 facet_wrap(~model) + 
 theme_minimal() +
 theme(legend.title=element_blank())
@@ -149,11 +152,11 @@ theme(legend.title=element_blank())
 
 dir <- "../output_data/comparison_plots/"
 
-pdf(paste0(dir, "ice_gammaridae.pdf"))
+pdf(paste0(dir, "ice_subset.pdf"))
 print(fig1)
 dev.off()
 
-pdf(paste0(dir, "boxplot_gammaridae.pdf"))
+pdf(paste0(dir, "boxplot_subset.pdf"))
 print(fig2)
 dev.off() 
 
