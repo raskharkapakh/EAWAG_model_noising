@@ -73,13 +73,15 @@ prev.taxa       <- read.csv(paste0(dir.input, file.prev.taxa),
                             sep = ",", 
                             stringsAsFactors = F)
 
+list.exp <- list.exp.gauss
+
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 1: multi ICE ----
+# Fig 1: multi ICE (PDP only) ----
 
 env.fact.under.obs <- "temperature"
 taxon.under.obs <- "Occurrence.Gammaridae"
 
-multi.ice <- lapply(list.exp.subset, FUN=function(name){
+multi.ice <- lapply(list.exp, FUN=function(name){
                      
   dir.experiment          <- paste0(dir.output, name, "/")
   
@@ -119,7 +121,7 @@ fig1 <- ggplot(data=final.multi.ice) +
 # Fig 2: multi box plot ----
 
 # somehow this function takes ~10 min to run
-multi.all.results <- lapply(list.exp.subset, FUN=function(name){
+multi.all.results <- lapply(list.exp, FUN=function(name){
   
   dir.experiment <- paste0(dir.output, name, "/")
   models.cv      <- load.models(path=dir.experiment, split.type="CV")
@@ -137,19 +139,148 @@ multi.all.results <- lapply(list.exp.subset, FUN=function(name){
 
 final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
 
-View(final.multi.all.results)
-
 ggplot(data=final.multi.all.results) +
-geom_boxplot(aes(x=reorder(column_label,dev, FUN=median),
+geom_boxplot(aes(x=column_label,
                  y=dev,
                  fill=fit_pred)) +
+scale_x_discrete(limits=names(list.exp)) +
 facet_wrap(~model) + 
 theme_minimal() +
 theme(legend.title=element_blank())
 
 
 
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Fig 3: "box" plot with a single taxon ----
 
+multi.all.results <- lapply(list.exp, FUN=function(name){
+  
+  dir.experiment <- paste0(dir.output, name, "/")
+  models.cv      <- load.models(path=dir.experiment, split.type="CV")
+  
+  all.results    <- summarize.all.results(models.cv, prev.taxa)
+  
+  rm(models.cv) 
+  
+  all.results <- restructure.all.results(all.results)
+  
+  all.results["noise"] <- name
+  
+  return(all.results)
+})
+
+final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
+
+taxa.to.keep <- "Gammaridae"
+
+filtered.multi.all.results <- final.multi.all.results %>%
+                              filter(taxa == taxa.to.keep)
+
+ggplot(data=filtered.multi.all.results) +
+  geom_point(aes(x=column_label,
+                   y=dev,
+                   shape=model, 
+                   color=fit_pred)) +
+  scale_x_discrete(limits=names(list.exp)) +
+  #facet_wrap(~fit_pred) + 
+  theme_minimal() +
+  theme(legend.title=element_blank())
+  
+
+# TODO: “box plot” over a single taxa. The x-axis is for different scenario. The
+#       y-axis is for the deviance. The different should be plotted on the same
+#       column but with a different shape (e.g. square, triangle, star, …) and
+#       two colors should be used to distinguish between fitting and predicting.
+
+
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Fig 4: dual ICE ----
+
+# TODO: ICE for two scenarios (maybe in two plots alongside each other)
+
+experiment1 <- "experiment_no_noise_29_06_2023_18h13" # baseline
+experiment2 <- "experiment_temp_5_30_06_2023_05h53"   # extreme noise
+
+env.fact.under.obs <- "temperature"
+taxon.under.obs <- "Occurrence.Gammaridae"
+
+list.dual.exp <- list("exp1" = experiment1,
+                      "exp2" = experiment2)
+
+dual.ice <- lapply(list.dual.exp, FUN=function(name){
+  
+  dir.experiment          <- paste0(dir.output, name, "/")
+  
+  models.fit      <- load.models(path=dir.experiment, split.type="FIT")
+  std.const.fit   <- readRDS(file=paste0(dir.experiment, "standardization_constant_FIT.rds"))
+  
+  ice.dfs <- plot.ice(models.performance=models.fit,
+                      env.factor=env.fact.under.obs,
+                      taxa=taxon.under.obs,
+                      standardization.constant=std.const.fit[[1]],
+                      nb.sample=100,
+                      resolution=200)
+  
+  return(ice.dfs)
+})
+
+View(dual.ice)
+
+obs1      <- dual.ice[["exp1"]][["observations"]]
+env.fact1 <- dual.ice[["exp1"]][["env.factor.sampled"]]
+obs2      <- dual.ice[["exp2"]][["observations"]]
+env.fact2 <- dual.ice[["exp2"]][["env.factor.sampled"]]
+
+final.multi.ice <- bind_rows(multi.ice, .id = "column_label")
+
+
+
+
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Fig 5: multi-scenario bellplots ----
+multi.all.results <- lapply(list.exp, FUN=function(name){
+  
+  dir.experiment <- paste0(dir.output, name, "/")
+  models.cv      <- load.models(path=dir.experiment, split.type="CV")
+  
+  all.results    <- summarize.all.results(models.cv, prev.taxa)
+  
+  rm(models.cv) 
+  
+  all.results <- restructure.all.results(all.results)
+  
+  all.results["noise"] <- name
+  
+  return(all.results)
+})
+
+final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
+
+color.map <- c('1'            = 'deepskyblue',   # Generalized Linear Model
+               '2'            = 'green',         # Generalized Additive Model
+               '3'            = 'orange',        # Artificial Neural Network
+               '4'            = 'red')           # Random Forest
+  
+names(color.map) <- names(list.exp)
+
+ggplot(data=final.multi.all.results,
+               aes(x=prevalence, y=dev, color=column_label)) + 
+  geom_point(data=final.multi.all.results) +
+  facet_wrap(~model + fit_pred)  +
+  scale_color_manual(values=color.map) + 
+  theme_minimal() + 
+  theme(legend.title=element_blank())
+
+
+
+
+
+
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Saving plots ----
 dir <- "../output_data/comparison_plots/"
 
 pdf(paste0(dir, "ice_subset.pdf"))

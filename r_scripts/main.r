@@ -9,7 +9,7 @@
 #                --- Andreas Scheidegger and Nele Schuwirth ---                #
 #                                                                              #
 #                      --- emma.chollet@eawag.ch ---                           #
-#                                  l                                            #
+#                                  l                                           #
 ###############################################################################|
 
 
@@ -60,7 +60,7 @@ source("plotting.r")
 file.input.data         <- "All_2729samples_9envfact_lme.area.elev_ModelInputs.csv"
 file.prev.taxa          <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
 
-experiment.name         <- paste0("experiment_no_noise_",#TODO: change name
+experiment.name         <- paste0("experiment_no_noise_",
                                   format(Sys.time(), "%d_%m_%Y_%Hh%M"))
 number.split            <- 3
 split.criterion         <- "SiteId"

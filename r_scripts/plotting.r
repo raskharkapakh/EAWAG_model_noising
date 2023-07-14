@@ -100,7 +100,6 @@ create.plots <- function(experiment.name="experiment_name",
   
   
   # Fig. 3 ----
-  # TODO: For ICE, the target env.factor and taxon need to be given as parameters
   env.fact.under.obs <- "temperature"
   taxon.under.obs <- "Occurrence.Gammaridae"
   
@@ -148,7 +147,39 @@ create.plots <- function(experiment.name="experiment_name",
           facet_wrap(~model)
   
   
-  # TODO: need to save figure to experiment folder
+  # Fig 4
+  noised.dataset <- models.fit[[1]][[1]][[1]][[1]][["observation"]]
+  taxa.col <- colnames(noised.dataset)[which(grepl("Occurrence.", colnames(noised.dataset)))]
+  
+  noised.prevalence <- lapply(taxa.col, FUN=function(taxon){
+    occurence  <- noised.dataset[[taxon]]
+    prevalence <- length(occurence[occurence=="present"])/length(occurence) 
+    return(prevalence)
+  })  
+  
+  noised.prev.taxa <- prev.taxa  
+  noised.prev.taxa[["Prevalence"]] <- noised.prevalence
+  
+  prev.taxa[["Status"]] <- "unnoised"
+  noised.prev.taxa[["Status"]] <- "noised"
+  
+  full.prev.taxa <- rbind(prev.taxa, noised.prev.taxa)
+  full.prev.taxa[["Occurrence.taxa"]] <- as.factor(full.prev.taxa[["Occurrence.taxa"]])
+  full.prev.taxa$Prevalence <- unlist(full.prev.taxa$Prevalence)
+  full.prev.taxa$Occurrence.taxa <- gsub("Occurrence.", "", full.prev.taxa$Occurrence.taxa)
+  
+  fig4 <- ggplot(data=full.prev.taxa,
+                 aes(x=Prevalence,
+                     y=Occurrence.taxa,
+                     color=Status)) + 
+          geom_point() +
+          scale_y_discrete(limits = rev(gsub("Occurrence.", "", prev.taxa$Occurrence.taxa))) +
+          labs(x="Prevalence", y="Taxa")
+          theme_minimal() + 
+          theme(legend.title=element_blank())
+  
+  
+  # Saving figures to experiment folder ----
   pdf(paste0(dir.experiment, "fig1.pdf"))
   print(fig1)
   dev.off()
@@ -161,22 +192,8 @@ create.plots <- function(experiment.name="experiment_name",
   print(fig3)
   dev.off()
   
-} 
+  pdf(paste0(dir.experiment, "fig4.pdf"))
+  print(fig4)
+  dev.off()
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+}
