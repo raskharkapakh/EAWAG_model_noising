@@ -60,8 +60,8 @@ source("plotting.r")
 file.input.data         <- "All_2729samples_9envfact_lme.area.elev_ModelInputs.csv"
 file.prev.taxa          <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
 
-experiment.name         <- paste0("experiment_no_noise_",
-                                  format(Sys.time(), "%d_%m_%Y_%Hh%M"))
+experiment.name         <- paste0("test_remove_temp")#,
+                                  #format(Sys.time(), "%d_%m_%Y_%Hh%M"))
 number.split            <- 3
 split.criterion         <- "SiteId"
 number.sample           <- 10000
@@ -90,10 +90,24 @@ noise2 <- list("type"       = "missdetection",
                "amount"     = 0.1, 
                "parameters" = NULL)
 
-noise  <- list("noise1"     = noise1,
-               "noise2"     = noise2)
+noise3 <- list("type"       = "add_factor",
+               "target"     = "random1", # new factor name
+               "amount"     = NULL, 
+               "parameters" = NULL)
 
-noise  <- list() # no noise
+noise4 <- list("type"       = "remove_factor",
+               "target"     = "temperature",
+               "amount"     = NULL, 
+               "parameters" = NULL)
+
+noise  <- list("noise1"     = noise1,
+               "noise2"     = noise2,
+               "noise3"     = noise3,
+               "noise4"     = noise4)
+
+noise  <- list("noise4"     = noise4)
+#noise  <- list("noise4"     = noise4)
+#noise  <- list() # no noise
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # training model ----
@@ -113,7 +127,4 @@ training.pipeline(file.input.data=file.input.data,
 # plotting models and saving model ----
 create.plots(experiment.name=experiment.name,
              file.prev.taxa=file.prev.taxa)
-
-
-
 

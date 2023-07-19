@@ -1,18 +1,18 @@
-ENV.FACT.COLNAMES       <- c("Temperature"                      = "temperature",       # Temp
-                             "Flow velocity"                    = "velocity",          # FV
-                             "Riparian agriculture"             = "A10m",              # A10m
-                             "Livestock unit density"           = "cow.density",       # LUD
-                             "Insecticide application rate"     = "IAR",               # IAR
-                             "Urban area"                       = "urban.area",        # Urban
-                             "Forest-river intersection"        = "FRI",               # FRI
-                             "Forest-river intersection buffer" = "bFRI",              # bFRI
-                             "Width variability"                = "width.variability") # WV
+#ENV.FACT.COLNAMES       <- c("Temperature"                      = "temperature",       # Temp
+#                             "Flow velocity"                    = "velocity",          # FV
+#                             "Riparian agriculture"             = "A10m",              # A10m
+#                             "Livestock unit density"           = "cow.density",       # LUD
+#                             "Insecticide application rate"     = "IAR",               # IAR
+#                             "Urban area"                       = "urban.area",        # Urban
+#                             "Forest-river intersection"        = "FRI",               # FRI
+#                             "Forest-river intersection buffer" = "bFRI",              # bFRI
+#                             "Width variability"                = "width.variability") # WV
 
-ENV.FACT.FULL.COLNAMES  <- c(ENV.FACT.COLNAMES,
-                             "Temperature2"                     = "temperature2",
-                             "Velocity2"                        = "velocity2")
+#ENV.FACT.FULL.COLNAMES  <- c(ENV.FACT.COLNAMES,
+#                             "Temperature2"                     = "temperature2",
+#                             "Velocity2"                        = "velocity2")
 
-TAXA.COLNAMES      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
+TAXA.COLNAMES.MIN      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
                               "Oligochaeta"                     = "Occurrence.Oligochaeta",
                               "Limoniidae"                      = "Occurrence.Limoniidae",
                               "Limnephilidae"                   = "Occurrence.Limnephilidae",
@@ -79,6 +79,9 @@ TAXA.COLNAMES.PART          <- c("Simuliidae"                        = "Occurren
                             "Gammaridae"                        = "Occurrence.Gammaridae",
                             "Stratiomyidae"                     = "Occurrence.Stratiomyidae",
                             "Sialidae"                          = "Occurrence.Sialidae")
+
+TAXA.COLNAMES          <- c("Simuliidae"                        = "Occurrence.Simuliidae",
+                            "Gammaridae"                        = "Occurrence.Gammaridae")
 
 TUNE.GRID.GLM          <- NULL # add tuning parameters for GLM here 
 

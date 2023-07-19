@@ -80,7 +80,7 @@ missclassification <- function(data){
 }
 
 
-add.noise <- function(data, number.sample, noise){
+add.noise <- function(data, number.sample, noise, env.fact, env.fact.full){
   
   # reduce number of training sample in data
   number.sample <- max(0, min(nrow(data), number.sample))
@@ -108,8 +108,25 @@ add.noise <- function(data, number.sample, noise){
       noised.data <- noised.data %>%
         missmissclassification(data)
     }
+    if (n[["type"]]=="add_factor"){
+    
+      new.factor.name                <- n[["target"]]
+      noised.data[[new.factor.name]] <- runif(nrow(data), -1, 1)
+      env.fact                       <- c(env.fact,
+                                          new.factor.name = new.factor.name)
+      env.fact.full                  <- c(env.fact.full,
+                                          new.factor.name = new.factor.name)
+    }
+    if (n[["type"]]=="remove_factor"){
+      target_factor <- n[["target"]]
+      
+      env.fact <- env.fact[!grepl(target_factor, env.fact)]
+      env.fact.full <- env.fact.full[!grepl(target_factor, env.fact.full)]
+    }
   }
-  
-  return(noised.data)
+
+  return(list("noised data"   = noised.data,
+              "env fact"      = env.fact,
+              "env fact full" = env.fact.full))
 }
   

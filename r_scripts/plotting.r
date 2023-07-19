@@ -75,28 +75,28 @@ create.plots <- function(experiment.name="experiment_name",
                              filter(fit_pred=="pred"))["median"])
   
   fig1 <- ggplot(data=ggplot.all.results,
-                aes(x=model, y=dev)) +
-          geom_boxplot(aes(fill=fit_pred)) +
-          geom_hline(aes(yintercept=median.null.pred,
-                         color="median null model (pred)"),
-                     linetype="dashed") + 
-          geom_hline(aes(yintercept=median.best.pred,
-                         color="median best model (pred)"),
-                     linetype="dashed") +
-          scale_colour_manual(values = c('green','black')) +
-          theme_minimal() +
-          theme(legend.title=element_blank())
+                 aes(x=model, y=dev)) +
+    geom_boxplot(aes(fill=fit_pred)) +
+    geom_hline(aes(yintercept=median.null.pred,
+                   color="median null model (pred)"),
+               linetype="dashed") + 
+    geom_hline(aes(yintercept=median.best.pred,
+                   color="median best model (pred)"),
+               linetype="dashed") +
+    scale_colour_manual(values = c('green','black')) +
+    theme_minimal() +
+    theme(legend.title=element_blank())
   
   
   # Fig. 2 ----
   fig2 <- ggplot(data=subset(ggplot.all.results, model %in% "null"),
                  aes(x=prevalence, y=dev, color=model)) +
-          geom_smooth(se = FALSE) + 
-          geom_point(data=ggplot.all.results) +
-          facet_wrap(~fit_pred) +
-          scale_color_manual(values=color.map) +
-          theme_minimal() + 
-          theme(legend.title=element_blank())
+    geom_smooth(se = FALSE) + 
+    geom_point(data=ggplot.all.results) +
+    facet_wrap(~fit_pred) +
+    scale_color_manual(values=color.map) +
+    theme_minimal() + 
+    theme(legend.title=element_blank())
   
   
   # Fig. 3 ----
@@ -113,38 +113,38 @@ create.plots <- function(experiment.name="experiment_name",
   observations              <- ice.dfs[["observations"]]
   env.factor.sampled        <- ice.dfs[["env.factor.sampled"]]
   observations.mean         <- observations %>%
-                                  group_by(across(all_of(env.fact.under.obs)), model) %>%
-                                  summarise(avg = mean(pred))
+    group_by(across(all_of(env.fact.under.obs)), model) %>%
+    summarise(avg = mean(pred))
   observations.mean.bounds  <- observations.mean %>% group_by(model) %>%
-                                          summarise(x.mean=max(across(all_of(env.fact.under.obs))),
-                                                    y.mean.min=min(avg),
-                                                    y.mean.max=max(avg))
+    summarise(x.mean=max(across(all_of(env.fact.under.obs))),
+              y.mean.min=min(avg),
+              y.mean.max=max(avg))
   
   fig3 <- ggplot(data=observations) +
-          geom_line(aes(x=.data[[env.fact.under.obs]],
-                        y=pred,
-                    group=observation_number, 
-                    color=as.character(observation_number)),
-                    show.legend = FALSE) +
-          geom_line(data=observations.mean,
-                    aes(x=.data[[env.fact.under.obs]], y=avg),
-                    size=1.5) +
-          geom_rug(data = env.factor.sampled,
-                   aes(x=variable), 
-                   color="grey20",
-                   alpha=0.7,
-                   inherit.aes=F) + 
-          geom_segment(data=observations.mean.bounds,
-                       inherit.aes = FALSE,
-                       lineend="round",
-                       linejoin="round",
-                       aes(x=x.mean,
-                           y=y.mean.min,
-                           xend=x.mean,
-                           yend=y.mean.max),
-                       arrow=arrow(length = unit(0.3, "cm"),
-                                   ends = "both")) +
-          facet_wrap(~model)
+    geom_line(aes(x=.data[[env.fact.under.obs]],
+                  y=pred,
+                  group=observation_number, 
+                  color=as.character(observation_number)),
+              show.legend = FALSE) +
+    geom_line(data=observations.mean,
+              aes(x=.data[[env.fact.under.obs]], y=avg),
+              size=1.5) +
+    geom_rug(data = env.factor.sampled,
+             aes(x=variable), 
+             color="grey20",
+             alpha=0.7,
+             inherit.aes=F) + 
+    geom_segment(data=observations.mean.bounds,
+                 inherit.aes = FALSE,
+                 lineend="round",
+                 linejoin="round",
+                 aes(x=x.mean,
+                     y=y.mean.min,
+                     xend=x.mean,
+                     yend=y.mean.max),
+                 arrow=arrow(length = unit(0.3, "cm"),
+                             ends = "both")) +
+    facet_wrap(~model)
   
   
   # Fig 4

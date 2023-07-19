@@ -176,7 +176,7 @@ taxa.to.keep <- "Gammaridae"
 filtered.multi.all.results <- final.multi.all.results %>%
                               filter(taxa == taxa.to.keep)
 
-ggplot(data=filtered.multi.all.results) +
+fig3 <- ggplot(data=filtered.multi.all.results) +
   geom_point(aes(x=column_label,
                    y=dev,
                    shape=model, 
@@ -197,10 +197,8 @@ ggplot(data=filtered.multi.all.results) +
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Fig 4: dual ICE ----
 
-# TODO: ICE for two scenarios (maybe in two plots alongside each other)
-
-experiment1 <- "experiment_no_noise_29_06_2023_18h13" # baseline
-experiment2 <- "experiment_temp_5_30_06_2023_05h53"   # extreme noise
+experiment1 <- "dummy_exp1" # baseline
+experiment2 <- "dummy_exp2"   # extreme noise
 
 env.fact.under.obs <- "temperature"
 taxon.under.obs <- "Occurrence.Gammaridae"
@@ -225,15 +223,51 @@ dual.ice <- lapply(list.dual.exp, FUN=function(name){
   return(ice.dfs)
 })
 
-View(dual.ice)
-
 obs1      <- dual.ice[["exp1"]][["observations"]]
 env.fact1 <- dual.ice[["exp1"]][["env.factor.sampled"]]
 obs2      <- dual.ice[["exp2"]][["observations"]]
 env.fact2 <- dual.ice[["exp2"]][["env.factor.sampled"]]
 
-final.multi.ice <- bind_rows(multi.ice, .id = "column_label")
+obs       <- bind_rows(list(obs1, obs2),
+                       .id = "column_label")
+env.fact  <- bind_rows(list(env.fact1, env.fact2),
+                       .id = "column_label")
 
+observations.mean         <- obs %>%
+  group_by(across(all_of(env.fact.under.obs)), model, column_label) %>%
+  summarise(avg = mean(pred))
+observations.mean.bounds  <- observations.mean %>% group_by(model, column_label) %>%
+  summarise(x.mean=max(across(all_of(env.fact.under.obs))),
+            y.mean.min=min(avg),
+            y.mean.max=max(avg))
+
+ggplot(data=obs) +
+  geom_line(aes(x=.data[[env.fact.under.obs]],
+                y=pred,
+                group=interaction(observation_number,column_label),
+                color=column_label),
+            alpha=0.4,
+            show.legend = FALSE) +
+  geom_line(data=observations.mean,
+            aes(x=.data[[env.fact.under.obs]], y=avg, color=column_label),
+            size=1.5) +
+  geom_rug(data = env.fact,
+           aes(x=variable,
+               color=column_label),
+           alpha=0.7,
+           inherit.aes=F) + 
+  geom_segment(data=observations.mean.bounds,
+               inherit.aes = FALSE,
+               lineend="round",
+               linejoin="round",
+               aes(x=x.mean,
+                   y=y.mean.min,
+                   xend=x.mean,
+                   yend=y.mean.max,
+                   color=column_label),
+               arrow=arrow(length = unit(0.3, "cm"),
+                           ends = "both")) +
+  facet_wrap(~model)
 
 
 
@@ -265,7 +299,7 @@ color.map <- c('1'            = 'deepskyblue',   # Generalized Linear Model
   
 names(color.map) <- names(list.exp)
 
-ggplot(data=final.multi.all.results,
+fig5 <- ggplot(data=final.multi.all.results,
                aes(x=prevalence, y=dev, color=column_label)) + 
   geom_point(data=final.multi.all.results) +
   facet_wrap(~model + fit_pred)  +
@@ -283,11 +317,23 @@ ggplot(data=final.multi.all.results,
 # Saving plots ----
 dir <- "../output_data/comparison_plots/"
 
-pdf(paste0(dir, "ice_subset.pdf"))
+pdf(paste0(dir, "pdp_subset.pdf"))
 print(fig1)
 dev.off()
 
-pdf(paste0(dir, "boxplot_subset.pdf"))
+pdf(paste0(dir, "boxplot_extreme.pdf"))
 print(fig2)
+dev.off() 
+
+pdf(paste0(dir, "single_boxplot_extreme.pdf"))
+print(fig3)
+dev.off()
+
+pdf(paste0(dir, "dummy_dual_ice_comparison.pdf"))
+print(fig4)
+dev.off()
+
+pdf(paste0(dir, "bell_extreme.pdf"))
+print(fig5)
 dev.off() 
 
