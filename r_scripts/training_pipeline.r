@@ -69,12 +69,20 @@ training.pipeline <- function(
   ENV.FACT.COLNAMES      <- noise.data.list[["env fact"]]
   ENV.FACT.FULL.COLNAMES <- noise.data.list[["env fact full"]]
   
+  assign("ENV.FACT.COLNAMES",
+         ENV.FACT.COLNAMES,
+         envir = globalenv())
+  
+  assign("ENV.FACT.FULL.COLNAMES",
+         ENV.FACT.FULL.COLNAMES,
+         envir = globalenv())
+  
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Preprocess dataset ----
   
   # Replace 0s and 1s in taxas' columns respectively by labels "absent"/"present"
-  noise.data <- categorize.taxa.occurence(noised.data)
+  noised.data <- categorize.taxa.occurence(noised.data)
   
   
   
@@ -88,6 +96,7 @@ training.pipeline <- function(
   preprocessed.data.fit <- preprocess.data(data=noised.data,
                                            dir=dir.experiment,
                                            split.type="FIT")
+  
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Train models (GLM, gamLoess, RF, ANN) and save them ----.

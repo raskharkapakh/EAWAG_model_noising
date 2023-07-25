@@ -45,295 +45,56 @@ source("global_variables.r")
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Global variables ----
-list.experiences <- list("baseline"          = "experiment_no_noise_29_06_2023_18h13",
-                         "missdetection"     = "experiment_miss_gammaridae_50_01_07_2023_03h37",
-                         "gaussian noise"    = "experiment_temp_5_30_06_2023_05h53",
-                         "less datapoints"   = "experiment_subset_500_01_07_2023_11h23")
+list.experiences    <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "missdetection"     = "experiment_miss_gammaridae_50_01_07_2023_03h37",
+                            "gaussian noise"    = "experiment_temp_5_30_06_2023_05h53",
+                            "less datapoints"   = "experiment_subset_500_01_07_2023_11h23")
 
-list.exp.gauss   <- list("baseline"          = "experiment_no_noise_29_06_2023_18h13",
-                         "low noise"         = "experiment_temp_1_29_06_2023_20h44",
-                         "mid noise"         = "experiment_temp_3_29_06_2023_23h07",
-                         "high noise"        = "experiment_temp_5_30_06_2023_05h53")
+# temp DONE
+list.exp.gauss      <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "gaussian_temp_1_21_07_2023_14h20",
+                            "mid noise"         = "gaussian_temp_3_21_07_2023_16h42",
+                            "high noise"        = "gaussian_temp_5_21_07_2023_22h09")
 
-list.exp.miss    <- list("baseline"          = "experiment_no_noise_29_06_2023_18h13",
-                         "low noise"         = "experiment_miss_gammaridae_10_30_06_2023_13h02",
-                         "mid noise"         = "experiment_miss_gammaridae_25_30_06_2023_19h54",
-                         "high noise"        = "experiment_miss_gammaridae_50_01_07_2023_03h37")
+# missdetection gammaridae DONE
+list.exp.miss.gamma <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "gammaridae_missdetection_10_22_07_2023_04h08",
+                            "mid noise"         = "gammaridae_missdetection_25_22_07_2023_10h15",
+                            "high noise"        = "gammaridae_missdetection_50_22_07_2023_16h37")
 
-list.exp.subset  <- list("baseline"          = "experiment_no_noise_29_06_2023_18h13",
-                         "low noise"         = "experiment_subset_2000_01_07_2023_16h52",
-                         "mid noise"         = "experiment_subset_1000_01_07_2023_13h28",
-                         "high noise"        = "experiment_subset_500_01_07_2023_11h23")
+# missdetection gammaridae DONE
+list.exp.miss.all   <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "all_taxa_missdetection_10_22_07_2023_23h01",
+                            "mid noise"         = "all_taxa_missdetection_25_23_07_2023_05h43",
+                            "high noise"        = "all_taxa_missdetection_50_23_07_2023_12h09")
 
-dir.input       <- "../input_data/"
-dir.output      <- "../output_data/"
-file.prev.taxa  <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
-prev.taxa       <- read.csv(paste0(dir.input, file.prev.taxa),
-                            header = T, 
-                            sep = ",", 
-                            stringsAsFactors = F)
+# subset DONE
+list.exp.subset     <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "subset_2000_24_07_2023_00h40",
+                            "mid noise"         = "subset_1000_23_07_2023_21h24",
+                            "high noise"        = "subset_500_23_07_2023_19h25")
 
-list.exp <- list.exp.gauss
+# remove factor
+list.remove.fact    <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "env_fact_removed_1_24_07_2023_03h30",
+                            "mid noise"         = "env_fact_removed_4_24_07_2023_06h16",
+                            "high noise"        = "env_fact_removed_8_24_07_2023_08h30")
 
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 1: multi ICE (PDP only) ----
+# adding factor
+#list.dummy          <- list("baseline"          = "baseline_21_07_2023_12h00",
+#                            "low noise"         = "add_env_fact_1_24_07_2023_10h41",
+#                            "mid noise"         = "TODO",
+#                            "high noise"        = "TODO")
 
-env.fact.under.obs <- "temperature"
-taxon.under.obs <- "Occurrence.Gammaridae"
+# gaussian temperature and velocity DONE
+list.gauss.temp.vel <- list("baseline"          = "baseline_21_07_2023_12h00",
+                            "low noise"         = "gaussian_velocity_3_24_07_2023_23h09",
+                            "mid noise"         = "gaussian_temp_3_21_07_2023_16h42",
+                            "high noise"        = "gaussian_temp_velocity_3_25_07_2023_06h38")
 
-multi.ice <- lapply(list.exp, FUN=function(name){
-                     
-  dir.experiment          <- paste0(dir.output, name, "/")
+
+
+
+
+create.comparison.plots("dummy", list.dummy)
   
-  models.fit      <- load.models(path=dir.experiment, split.type="FIT")
-  std.const.fit   <- readRDS(file=paste0(dir.experiment, "standardization_constant_FIT.rds"))
-  
-  ice.dfs <- plot.ice(models.performance=models.fit,
-                      env.factor=env.fact.under.obs,
-                      taxa=taxon.under.obs,
-                      standardization.constant=std.const.fit[[1]],
-                      nb.sample=100,
-                      resolution=200)
-  
-  observations              <- ice.dfs[["observations"]]
-  #env.factor.sampled        <- ice.dfs[["env.factor.sampled"]]
-  observations.mean         <- observations %>%
-    group_by(across(all_of(env.fact.under.obs)), model) %>%
-    summarise(avg = mean(pred))
-  
-  observations.mean["noise"] <- name
-  
-  return(observations.mean)
-})
-
-final.multi.ice <- bind_rows(multi.ice, .id = "column_label")
-
-fig1 <- ggplot(data=final.multi.ice) +
-  geom_line(aes(x=.data[[env.fact.under.obs]],
-                y=avg,
-                group=column_label,
-                colour=column_label),
-            size=1) +
-  facet_wrap(~model)
-
-
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 2: multi box plot ----
-
-# somehow this function takes ~10 min to run
-multi.all.results <- lapply(list.exp, FUN=function(name){
-  
-  dir.experiment <- paste0(dir.output, name, "/")
-  models.cv      <- load.models(path=dir.experiment, split.type="CV")
-  
-  all.results    <- summarize.all.results(models.cv, prev.taxa)
-  
-  rm(models.cv) 
-  
-  all.results <- restructure.all.results(all.results)
-  
-  all.results["noise"] <- name
-  
-  return(all.results)
-})
-
-final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
-
-ggplot(data=final.multi.all.results) +
-geom_boxplot(aes(x=column_label,
-                 y=dev,
-                 fill=fit_pred)) +
-scale_x_discrete(limits=names(list.exp)) +
-facet_wrap(~model) + 
-theme_minimal() +
-theme(legend.title=element_blank())
-
-
-
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 3: "box" plot with a single taxon ----
-
-multi.all.results <- lapply(list.exp, FUN=function(name){
-  
-  dir.experiment <- paste0(dir.output, name, "/")
-  models.cv      <- load.models(path=dir.experiment, split.type="CV")
-  
-  all.results    <- summarize.all.results(models.cv, prev.taxa)
-  
-  rm(models.cv) 
-  
-  all.results <- restructure.all.results(all.results)
-  
-  all.results["noise"] <- name
-  
-  return(all.results)
-})
-
-final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
-
-taxa.to.keep <- "Gammaridae"
-
-filtered.multi.all.results <- final.multi.all.results %>%
-                              filter(taxa == taxa.to.keep)
-
-fig3 <- ggplot(data=filtered.multi.all.results) +
-  geom_point(aes(x=column_label,
-                   y=dev,
-                   shape=model, 
-                   color=fit_pred)) +
-  scale_x_discrete(limits=names(list.exp)) +
-  #facet_wrap(~fit_pred) + 
-  theme_minimal() +
-  theme(legend.title=element_blank())
-  
-
-# TODO: “box plot” over a single taxa. The x-axis is for different scenario. The
-#       y-axis is for the deviance. The different should be plotted on the same
-#       column but with a different shape (e.g. square, triangle, star, …) and
-#       two colors should be used to distinguish between fitting and predicting.
-
-
-
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 4: dual ICE ----
-
-experiment1 <- "dummy_exp1" # baseline
-experiment2 <- "dummy_exp2"   # extreme noise
-
-env.fact.under.obs <- "temperature"
-taxon.under.obs <- "Occurrence.Gammaridae"
-
-list.dual.exp <- list("exp1" = experiment1,
-                      "exp2" = experiment2)
-
-dual.ice <- lapply(list.dual.exp, FUN=function(name){
-  
-  dir.experiment          <- paste0(dir.output, name, "/")
-  
-  models.fit      <- load.models(path=dir.experiment, split.type="FIT")
-  std.const.fit   <- readRDS(file=paste0(dir.experiment, "standardization_constant_FIT.rds"))
-  
-  ice.dfs <- plot.ice(models.performance=models.fit,
-                      env.factor=env.fact.under.obs,
-                      taxa=taxon.under.obs,
-                      standardization.constant=std.const.fit[[1]],
-                      nb.sample=100,
-                      resolution=200)
-  
-  return(ice.dfs)
-})
-
-obs1      <- dual.ice[["exp1"]][["observations"]]
-env.fact1 <- dual.ice[["exp1"]][["env.factor.sampled"]]
-obs2      <- dual.ice[["exp2"]][["observations"]]
-env.fact2 <- dual.ice[["exp2"]][["env.factor.sampled"]]
-
-obs       <- bind_rows(list(obs1, obs2),
-                       .id = "column_label")
-env.fact  <- bind_rows(list(env.fact1, env.fact2),
-                       .id = "column_label")
-
-observations.mean         <- obs %>%
-  group_by(across(all_of(env.fact.under.obs)), model, column_label) %>%
-  summarise(avg = mean(pred))
-observations.mean.bounds  <- observations.mean %>% group_by(model, column_label) %>%
-  summarise(x.mean=max(across(all_of(env.fact.under.obs))),
-            y.mean.min=min(avg),
-            y.mean.max=max(avg))
-
-ggplot(data=obs) +
-  geom_line(aes(x=.data[[env.fact.under.obs]],
-                y=pred,
-                group=interaction(observation_number,column_label),
-                color=column_label),
-            alpha=0.4,
-            show.legend = FALSE) +
-  geom_line(data=observations.mean,
-            aes(x=.data[[env.fact.under.obs]], y=avg, color=column_label),
-            size=1.5) +
-  geom_rug(data = env.fact,
-           aes(x=variable,
-               color=column_label),
-           alpha=0.7,
-           inherit.aes=F) + 
-  geom_segment(data=observations.mean.bounds,
-               inherit.aes = FALSE,
-               lineend="round",
-               linejoin="round",
-               aes(x=x.mean,
-                   y=y.mean.min,
-                   xend=x.mean,
-                   yend=y.mean.max,
-                   color=column_label),
-               arrow=arrow(length = unit(0.3, "cm"),
-                           ends = "both")) +
-  facet_wrap(~model)
-
-
-
-
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Fig 5: multi-scenario bellplots ----
-multi.all.results <- lapply(list.exp, FUN=function(name){
-  
-  dir.experiment <- paste0(dir.output, name, "/")
-  models.cv      <- load.models(path=dir.experiment, split.type="CV")
-  
-  all.results    <- summarize.all.results(models.cv, prev.taxa)
-  
-  rm(models.cv) 
-  
-  all.results <- restructure.all.results(all.results)
-  
-  all.results["noise"] <- name
-  
-  return(all.results)
-})
-
-final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
-
-color.map <- c('1'            = 'deepskyblue',   # Generalized Linear Model
-               '2'            = 'green',         # Generalized Additive Model
-               '3'            = 'orange',        # Artificial Neural Network
-               '4'            = 'red')           # Random Forest
-  
-names(color.map) <- names(list.exp)
-
-fig5 <- ggplot(data=final.multi.all.results,
-               aes(x=prevalence, y=dev, color=column_label)) + 
-  geom_point(data=final.multi.all.results) +
-  facet_wrap(~model + fit_pred)  +
-  scale_color_manual(values=color.map) + 
-  theme_minimal() + 
-  theme(legend.title=element_blank())
-
-
-
-
-
-
-
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# Saving plots ----
-dir <- "../output_data/comparison_plots/"
-
-pdf(paste0(dir, "pdp_subset.pdf"))
-print(fig1)
-dev.off()
-
-pdf(paste0(dir, "boxplot_extreme.pdf"))
-print(fig2)
-dev.off() 
-
-pdf(paste0(dir, "single_boxplot_extreme.pdf"))
-print(fig3)
-dev.off()
-
-pdf(paste0(dir, "dummy_dual_ice_comparison.pdf"))
-print(fig4)
-dev.off()
-
-pdf(paste0(dir, "bell_extreme.pdf"))
-print(fig5)
-dev.off() 
-

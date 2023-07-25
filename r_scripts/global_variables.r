@@ -12,7 +12,20 @@
 #                             "Temperature2"                     = "temperature2",
 #                             "Velocity2"                        = "velocity2")
 
-TAXA.COLNAMES.MIN      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
+ENV.FACT.MAP            <- c("Temperature"                      = "temperature",       # Temp
+                             "Flow velocity"                    = "velocity",          # FV
+                             "Riparian agriculture"             = "A10m",              # A10m
+                             "Livestock unit density"           = "cow.density",       # LUD
+                             "Insecticide application rate"     = "IAR",               # IAR
+                             "Urban area"                       = "urban.area",        # Urban
+                             "Forest-river intersection"        = "FRI",               # FRI
+                             "Forest-river intersection buffer" = "bFRI",              # bFRI
+                             "Width variability"                = "width.variability",
+                             "Temperature squared"              = "temperature2",
+                             "Velocity squared"                 = "velocity2")
+
+
+TAXA.COLNAMES      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
                               "Oligochaeta"                     = "Occurrence.Oligochaeta",
                               "Limoniidae"                      = "Occurrence.Limoniidae",
                               "Limnephilidae"                   = "Occurrence.Limnephilidae",
@@ -73,14 +86,8 @@ TAXA.COLNAMES.MIN      <-  c("Simuliidae"                      = "Occurrence.Sim
                               "Physidae"                        = "Occurrence.Physidae",
                               "Sialidae"                        = "Occurrence.Sialidae")
 
-# This subset is meant for increasing speed during testing. When every is ready,
-# the content of TAXA.COLNAMES should be replaced by TAXA.COLNAMES.FULL
-TAXA.COLNAMES.PART          <- c("Simuliidae"                        = "Occurrence.Simuliidae",
-                            "Gammaridae"                        = "Occurrence.Gammaridae",
-                            "Stratiomyidae"                     = "Occurrence.Stratiomyidae",
-                            "Sialidae"                          = "Occurrence.Sialidae")
-
-TAXA.COLNAMES          <- c("Simuliidae"                        = "Occurrence.Simuliidae",
+# This subset is meant for increasing speed during testing.
+TAXA.COLNAMES.SMALL          <- c("Simuliidae"                  = "Occurrence.Simuliidae",
                             "Gammaridae"                        = "Occurrence.Gammaridae")
 
 TUNE.GRID.GLM          <- NULL # add tuning parameters for GLM here 

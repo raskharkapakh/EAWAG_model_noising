@@ -278,7 +278,16 @@ plot.ice <- function(models.performance,
                      taxa,
                      standardization.constant,
                      nb.sample=100,
-                     resolution=200){
+                     resolution=200,
+                     input.env.factors=c("Temperature"                      = "temperature",
+                                         "Flow velocity"                    = "velocity",          # FV
+                                         "Riparian agriculture"             = "A10m",              # A10m
+                                         "Livestock unit density"           = "cow.density",       # LUD
+                                         "Insecticide application rate"     = "IAR",               # IAR
+                                         "Urban area"                       = "urban.area",        # Urban
+                                         "Forest-river intersection"        = "FRI",               # FRI
+                                         "Forest-river intersection buffer" = "bFRI",              # bFRI
+                                         "Width variability"                = "width.variability")){
   
   
   # This function is used to create the dataframe to plot Individual Conditional
@@ -364,7 +373,8 @@ plot.ice <- function(models.performance,
                         FUN=make.prediction,
                         models,
                         sampled.observations,
-                        taxa)
+                        taxa,
+                        input.env.factors)
   
   names(predictions) <- models.names
   
@@ -396,7 +406,7 @@ plot.ice <- function(models.performance,
   
 }
 
-make.prediction <- function(model.name, models, obs, taxa){
+make.prediction <- function(model.name, models, obs, taxa, input.env.factors){
   
   # This is a helper function used by the plot.ice function. It uses a model
   # passed as argument, to make the prediction corresponding to the observations
@@ -418,7 +428,7 @@ make.prediction <- function(model.name, models, obs, taxa){
   
   if(model.name == "ann"){
     
-    obs.matrix  <- as.matrix(obs[ ,ENV.FACT.COLNAMES])
+    obs.matrix  <- as.matrix(obs[ ,input.env.factors])
     predictions <- model[[1]] %>% predict(obs.matrix)
     
     colnames(predictions) <- TAXA.COLNAMES
