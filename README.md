@@ -33,7 +33,7 @@ The goal of this package is to assess the effect of noise on different models (g
     * The different plots to assess the performance of a given models.
     * The metadata describing the parameters used to train the model. E.g. number of split, what noises have been added to the data, ...
 *	**plots**: In this folder are stored the plots to compare the models' performances under different noising scenario
-*	**r_script**: Where all the different scripts are stored. The most important script to know for the user are:
+*	**r_script**: Where all the different scripts are stored. The most important scripts to know for the user are:
     * **main.r**: with this script, the user can specify some parameters (e.g. what models to train, how many splits are desired for cross-validation, ...) and then train different models according to those parameters
     * **comparison_plots.r**: With this script, the user can give a list of models under different settings and plot comparison of how the models are performing under those different settings. The generated plots are then saved in the folder "plots".
 
@@ -41,7 +41,7 @@ The goal of this package is to assess the effect of noise on different models (g
 
 ### main.r
 
-the parameters to train the model:
+TODO: explain more in detail. the parameters to train the model:
 
 * **experiment.name**: The name to give to the folder where the models, preprocessed datasets, standardization constants and metadata will be saved.
 * **number.split**: how many splits are desired for the cross validation.
@@ -57,8 +57,8 @@ the parameters to train the model:
 
     * new.factor.noise <- list("type" = "add_factor", "target" = "random1", "amount" = NULL, "parameters" = NULL)
 
-    *	Remove.factor.noise <- list("type" = "remove_factor", "target" = "temperature", "amount" = NULL, "parameters" = NULL)
+    *	remove.factor.noise <- list("type" = "remove_factor", "target" = "temperature", "amount" = NULL, "parameters" = NULL)
 
 ### comparison_plotting.r
 
-TODO
+TODO: to fill
