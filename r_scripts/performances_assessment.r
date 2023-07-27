@@ -22,7 +22,7 @@ summarize.all.results <- function(models.data, prev.taxa){
   #
   # returns:
   #   - all.results: A dataframe whose columns are taxa, prevalence, 
-  # 1                taxonomic_level, model, dev, auc, fit_pred.
+  #                  taxonomic_level, model, dev, auc, fit_pred.
   
   
   # get dataframe 

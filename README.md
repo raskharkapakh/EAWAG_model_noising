@@ -2,11 +2,11 @@
 
 ### Background
 
-TODO
+TODO: copy from paper
 
 ### Overview
 
-TODO
+TODO: copy from paper
 
 ## Data
 
@@ -41,7 +41,7 @@ The goal of this package is to assess the effect of noise on different models (g
 
 ### main.r
 
-TODO: explain more in detail. the parameters to train the model:
+The goal of this script is to produce "an experiment". What we call an experiment is having a models trained under some specific condition that the users can choose. The different parameter of an experiment that can be picked by the user are the following: 
 
 * **experiment.name**: The name to give to the folder where the models, preprocessed datasets, standardization constants and metadata will be saved.
 * **number.split**: how many splits are desired for the cross validation.
@@ -51,14 +51,14 @@ TODO: explain more in detail. the parameters to train the model:
 * **env.factor**: The environmental factor to use to make the prediction in all the model except gamloess.
 * **env.factor.full**: The environmental factor to use to make the prediction only for the gamloess model.
 * **noise**: List of noises to add the dataset: example of noises are given:
-    * gaussian.noise <- list("type" = "gaussian", "target" = "temperature", "amount" = 5, "parameters" = list("min"=0, "max"=35))
+    * `gaussian.noise <- list("type"="gaussian", "target"="temperature", "amount"=1, "parameters"=list("min"=0, "max"=35))`
 
-    * missdetection.noise <- list("type" = "missdetection", "target" = "Occurrence.Gammaridae", "amount" = 0.1, "parameters" = NULL)
+    * `missdetection.noise <- list("type"="missdetection", "target"="Occurrence.Gammaridae", "amount"=0.1, "parameters"=NULL)`
 
-    * new.factor.noise <- list("type" = "add_factor", "target" = "random1", "amount" = NULL, "parameters" = NULL)
+    * `new.factor.noise <- list("type"="add_factor", "target"="random1", "amount"=NULL, "parameters"=NULL)`
 
-    *	remove.factor.noise <- list("type" = "remove_factor", "target" = "temperature", "amount" = NULL, "parameters" = NULL)
+    *	`remove.factor.noise <- list("type"="remove_factor", "target"="temperature", "amount"=NULL, "parameters"=NULL)`
 
 ### comparison_plotting.r
 
-TODO: to fill
+The goal of this script is to produce plots comparing different experiments. The user can create a list of experiments and then create the plots to compare them using the function "create_comparison_plots" (found in the r_scripts/plotting.r) 

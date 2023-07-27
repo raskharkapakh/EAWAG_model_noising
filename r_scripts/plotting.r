@@ -5,6 +5,20 @@ create.plots <- function(experiment.name="experiment_name",
                          file.prev.taxa="All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"){
   
   
+  # The goal of this function is to create the different plots assessing 
+  # individually the performance of an experiment (i.e. one model trained under
+  # specific noise conditions)
+  #
+  # arguments:
+  #   - experiment.name:        The name of the folder (located in /output_data)
+  #                             containing all the data of the experiment we 
+  #                             wish to plot
+  #   - file.prev.taxa:         The name of the file containing the information 
+  #                             about the prevalence of taxa for instance
+  #
+  # returns:
+  #   - nothing is returned but plots are saved as .pdf files
+  
   
   # Libraries ----
   if (!require("dplyr")){install.packages("dplyr"); library("dplyr")}
@@ -209,6 +223,27 @@ create.comparison.plots <- function(filename,
                                     file.prev.taxa="All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv",
                                     taxon="Gammaridae",
                                     env.fact="temperature"){
+  
+  # The goal of this function is to create plots comparing the performance of a 
+  # different experiment (i.e. models trained under different noise conditions)
+  #
+  # arguments:
+  #   - filename:               This string will be taken as prefix when naming 
+  #                             and saving the different plot in the |plots 
+  #                             folder
+  #   - list.exp:               List of names of the folder (located in
+  #                             /output_data) containing all the data of the
+  #                             experiment we wish to compare
+  #   - file.prev.taxa:         The name of the file containing the information 
+  #                             about the prevalence of taxa for instance
+  #   - taxon:                  Which taxon will be considered when plotting the
+  #                             ICE
+  #   - env.fact                Which environment factor will be considered when
+  #                             plotting the ICE
+  #
+  # returns:
+  #   - nothing is returned but plots are saved as .pdf files
+
   
   env.fact.string <- env.fact
   
@@ -596,7 +631,22 @@ create.comparison.plots <- function(filename,
 
 
 get.input.env.factors <- function(exp.name){
-
+  
+  # this function takes as input as experiment and returns the env.factor that 
+  # were used when training the model. To do so, it gets the env. factors found
+  # in the metadata of the experiment and modify them according to the noises
+  # that were used in this experiment
+  
+  # arguments:
+  #   - exp.name:               The experiment for which it is desired to know 
+  #                             what environmental factors were used when 
+  #                             training the models
+  #
+  # returns:
+  #   - env.factor:             The name of the environmental factors used to
+  #                             train the models in the experiment given as the 
+  #                             input
+  
   dir.metadata <- paste0("../output_data/", exp.name, "/metadata.json")
   metadata <- read_json(dir.metadata)
   
