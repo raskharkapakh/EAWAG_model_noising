@@ -217,7 +217,7 @@ create.comparison.plots <- function(filename,
   }
   
   
-  dir <- "../output_data/comparison_plots/"
+  dir <- "../plots/comparison_plots/"
   dir.input       <- "../input_data/"
   dir.output      <- "../output_data/"
   prev.taxa       <- read.csv(paste0(dir.input, file.prev.taxa),
@@ -465,7 +465,7 @@ create.comparison.plots <- function(filename,
                              ends = "both"),
                  alpha=0.9) +
     xlim(lb, hb) +
-    facet_wrap(~column_label) +
+    facet_wrap(~column_label+model) +
     labs(x =env.fact.string,
          y = "Predicted probability of occurrence")
   
@@ -475,7 +475,7 @@ create.comparison.plots <- function(filename,
   
   rm(fig4)
   
-  # repeat fig4 for each model
+  # repeat fig4 for each model separately
   for (model.name in c("glm", "gamloess", "rf", "ann")){
     
     filtered.merged.obs               <- merged.obs               %>% filter(model == model.name)
@@ -523,75 +523,75 @@ create.comparison.plots <- function(filename,
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Fig 5: multi box plot ----
-  #multi.all.results <- lapply(list.exp, FUN=function(name){
+  multi.all.results <- lapply(list.exp, FUN=function(name){
   
-  #  dir.experiment <- paste0(dir.output, name, "/")
-  #  models.cv      <- load.models(path=dir.experiment, split.type="CV")
+    dir.experiment <- paste0(dir.output, name, "/")
+    models.cv      <- load.models(path=dir.experiment, split.type="CV")
   
-  #  all.results    <- summarize.all.results(models.cv, prev.taxa)
+    all.results    <- summarize.all.results(models.cv, prev.taxa)
   
-  #  rm(models.cv) 
+    rm(models.cv) 
   
-  #  all.results <- restructure.all.results(all.results)
+    all.results <- restructure.all.results(all.results)
   
-  #  all.results["noise"] <- name
+    all.results["noise"] <- name
   
-  #  return(all.results)
-  #})
+    return(all.results)
+  })
   
-  #final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
+  final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
   
-  #fig5 <- ggplot(data=final.multi.all.results) +
-  #geom_boxplot(aes(x=column_label,
-  #                 y=dev,
-  #                 fill=fit_pred)) +
-  #scale_x_discrete(limits=names(list.exp)) +
-  #facet_wrap(~model) + 
-  #theme_minimal() +
-  #theme(legend.title=element_blank())
+  fig5 <- ggplot(data=final.multi.all.results) +
+  geom_boxplot(aes(x=column_label,
+                   y=dev,
+                   fill=fit_pred)) +
+  scale_x_discrete(limits=names(list.exp)) +
+  facet_wrap(~model) + 
+  theme_minimal() +
+  theme(legend.title=element_blank())
   
   
-  #pdf(paste0(dir, filename, "_boxplot.pdf"))
-  #print(fig5)
-  #dev.off() 
+  pdf(paste0(dir, filename, "_boxplot.pdf"))
+  print(fig5)
+  dev.off() 
   
-  #rm(fig5)
+  rm(fig5)
   
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Fig 6: multi-scenario bellplots ----
-  #multi.all.results <- lapply(list.exp, FUN=function(name){
+  multi.all.results <- lapply(list.exp, FUN=function(name){
   
-  #  dir.experiment <- paste0(dir.output, name, "/")
-  #  models.cv      <- load.models(path=dir.experiment, split.type="CV")
+    dir.experiment <- paste0(dir.output, name, "/")
+    models.cv      <- load.models(path=dir.experiment, split.type="CV")
   
-  #  all.results    <- summarize.all.results(models.cv, prev.taxa)
+    all.results    <- summarize.all.results(models.cv, prev.taxa)
   
-  #  rm(models.cv) 
+    rm(models.cv) 
   
-  #  all.results <- restructure.all.results(all.results)
+    all.results <- restructure.all.results(all.results)
   
-  #  all.results["noise"] <- name
+    all.results["noise"] <- name
   
-  #  return(all.results)
-  #})
+    return(all.results)
+  })
   
-  #final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
+  final.multi.all.results <- bind_rows(multi.all.results, .id = "column_label")
   
   
-  #fig6 <- ggplot(data=final.multi.all.results,
-  #               aes(x=prevalence, y=dev, color=column_label)) + 
-  #  geom_point(data=final.multi.all.results) +
-  #  facet_wrap(~model + fit_pred)  +
-  #  scale_color_manual(values=color.map) + 
-  #  theme_minimal() + 
-  #  theme(legend.title=element_blank())
+  fig6 <- ggplot(data=final.multi.all.results,
+                 aes(x=prevalence, y=dev, color=column_label)) + 
+    geom_point(data=final.multi.all.results) +
+    facet_wrap(~model + fit_pred)  +
+    scale_color_manual(values=color.map) + 
+    theme_minimal() + 
+    theme(legend.title=element_blank())
   
-  #pdf(paste0(dir, filename, "_bell.pdf"))
-  #print(fig6)
-  #dev.off() 
+  pdf(paste0(dir, filename, "_bellplot.pdf"))
+  print(fig6)
+  dev.off() 
   
-  #rm(fig6)
+  rm(fig6)
 }
 
 
