@@ -18,7 +18,7 @@ The input data is already pre-processed (pre-processing information available up
 TODO: to modify once the streambugs data has been successfully generated.
 
 
-## Overal package Structure
+## Overal repo structure
 
 The goal of this package is to assess the effect of noise on different models (glm, gamloess, rf and a nn). The package is divided into four folders:
 
@@ -26,12 +26,13 @@ The goal of this package is to assess the effect of noise on different models (g
     * __All_2729samples_9envfact_lme.area.elev_ModelInputs.csv__ : Models input data (2729 observations of presence [1] and absence [0] of 60 taxa and calculation of nine environmental factors).
     * __All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv__ : Information on prevalence and taxonomic level of the 60 taxa.
 
-*	**output_data**: Where all the models are stored after training. The different plots assessing the performance are also stored there, When trained a model is stored in the folder, containing:
+*	**output_data**: Where all the models are stored after training. The different plots assessing the performance are also stored there. More specifically, when model have been trained in a specific noising scenarios, they are stored in a folder, containing:
     * the different models stored in a RDS file. There are two files: one for the models when trained in FIT mode and one for when the models are trained in Cross Validation (CV) mode
     * The datasets after being preprocessed. The preprocessing consists of standardizing the different environmental factors used for prediction. Moreover, preprocessing the dataset for CV requires to already create the different splits.
     * The standardization constant (mean and variance) for every environmental factor, both in FIT and CV mode.
     * The different plots to assess the performance of a given models.
-*	**plots**: Currently empty, because the plots are stored directly with the models in output data.
+    * The metadata describing the parameters used to train the model. E.g. number of split, what noises have been added to the data, ...
+*	**plots**: In this folder are stored the plots to compare the models' performances under different noising scenario
 *	**r_script**: Where all the different scripts are stored. The most important script to know for the user are:
     * **main.r**: with this script, the user can specify some parameters (e.g. what models to train, how many splits are desired for cross-validation, ...) and then train different models according to those parameters
     * **comparison_plots.r**: With this script, the user can give a list of models under different settings and plot comparison of how the models are performing under those different settings. The generated plots are then saved in the folder "plots".
