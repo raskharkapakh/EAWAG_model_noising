@@ -20,7 +20,7 @@ categorize.taxa.occurence <- function(data){
     data[,i] = as.factor(data[,i])
   }
   return(data)
-}
+} 
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Preprocessing data: Splitting and standardizing data  ----
