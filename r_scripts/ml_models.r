@@ -21,8 +21,7 @@ apply.ml.models <- function(data,
   #
   # returns:
   #   - models: the trained models (glm, gamLoess, rf, ann) 
-  
-  
+
   trained.null      <- if ("null" %in% models) apply.null.model(data, split.type) else NULL
   trained.glm       <- if ("glm" %in% models) apply.caret.model(data, split.type, ENV.FACT.FULL.COLNAMES, 'glm') else NULL
   trained.gamloess  <- if ("gamloess" %in% models) apply.caret.model(data, split.type, ENV.FACT.COLNAMES, 'gamLoess') else NULL
