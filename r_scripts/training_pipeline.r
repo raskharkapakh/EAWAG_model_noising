@@ -22,6 +22,7 @@ training.pipeline <- function(
   # Global variables ----
   dir.input.data          <- "../input_data/"
   dir.output              <- "../output_data/"
+  dir.create(dir.output)
   dir.experiment          <- paste0(dir.output, experiment.name, "/")
   dir.metadata            <- paste0(dir.experiment, "metadata.json")
   dir.create(dir.experiment)

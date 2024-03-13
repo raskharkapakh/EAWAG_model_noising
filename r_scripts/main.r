@@ -40,6 +40,7 @@ library("tensorflow")
 library("keras")
 #install_keras()                  # run this line only when opening new R session
 #use_condaenv()
+# reticulate::install_python(version = '<version>')
 
 # caret has to be loaded at the end to not cache function 'train'
 if (!require("caret")){install.packages("caret"); library("caret")}
@@ -61,7 +62,7 @@ source("plotting.r")
 # file.input.data         <- "8Catch_400Sites_Prev0.15_IntercToxSapro3_Shade_0.6_10Yea_3651Steps_WideData_ResultsPresAbs.csv"
 # file.prev.taxa          <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
 
-name.streambugs.run <- "8Catch_160Sites_round.inv.traits0.1_adjust.curve-10_10Yea_3651Steps"
+name.streambugs.run <- "8Catch_1416Sites_curve.curr.temp-10_interc.orgmic.sapro4_10Yea_3651Steps"
 file.input.data <- paste0(name.streambugs.run, "_WideData_ResultsThreshPresAbs.csv")
 file.prev.taxa <- paste0(name.streambugs.run, "_PrevalenceTaxonomy_ThreshPresAbs.csv")
 
@@ -72,8 +73,11 @@ number.split            <- 3
 # split.criterion         <- "SiteId"
 split.criterion         <- "ReachID"
 
-number.sample           <- 1000
-models                  <- list("null", "glm", "gamloess", "rf")#,
+number.sample           <- 100
+models                  <- list("null", 
+                                "glm",
+                                "gamloess",
+                                "rf")#,
                                 # "ann")
 # original environmental factors
 # env.factor              <- c("Temperature"                      = "temperature",       # Temp
