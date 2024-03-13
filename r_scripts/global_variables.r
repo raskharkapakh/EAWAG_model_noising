@@ -12,89 +12,90 @@
 #                             "Temperature2"                     = "temperature2",
 #                             "Velocity2"                        = "velocity2")
 
-ENV.FACT.MAP            <- c("Temperature"                      = "temperature",       # Temp
-                             "Flow velocity"                    = "velocity",          # FV
-                             "Riparian agriculture"             = "A10m",              # A10m
-                             "Livestock unit density"           = "cow.density",       # LUD
-                             "Insecticide application rate"     = "IAR",               # IAR
-                             "Urban area"                       = "urban.area",        # Urban
-                             "Forest-river intersection"        = "FRI",               # FRI
-                             "Forest-river intersection buffer" = "bFRI",              # bFRI
-                             "Width variability"                = "width.variability",
-                             "Temperature squared"              = "temperature2",
-                             "Velocity squared"                 = "velocity2")
-
-
-TAXA.COLNAMES      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
-                              "Oligochaeta"                     = "Occurrence.Oligochaeta",
-                              "Limoniidae"                      = "Occurrence.Limoniidae",
-                              "Limnephilidae"                   = "Occurrence.Limnephilidae",
-                              "Rhyacophilidae"                  = "Occurrence.Rhyacophilidae",
-                              "Elmidae"                         = "Occurrence.Elmidae",
-                              "Gammaridae"                      = "Occurrence.Gammaridae",
-                              "Heptageniidae"                   = "Occurrence.Heptageniidae",
-                              "Nemouridae"                      = "Occurrence.Nemouridae",
-                              "Empididae"                       = "Occurrence.Empididae",
-                              "Hydropsychidae"                  = "Occurrence.Hydropsychidae",
-                              "Leuctridae"                      = "Occurrence.Leuctridae",
-                              "Ceratopogonidae"                 = "Occurrence.Ceratopogonidae",
-                              "Prostigmata"                     = "Occurrence.Prostigmata",
-                              "Psychodidae"                     = "Occurrence.Psychodidae",
-                              "Leptophlebiidae"                 = "Occurrence.Leptophlebiidae",
-                              "Sphaeriidae"                     = "Occurrence.Sphaeriidae",
-                              "Taeniopterygidae"                = "Occurrence.Taeniopterygidae",
-                              "Perlodidae"                      = "Occurrence.Perlodidae",
-                              "Athericidae"                     = "Occurrence.Athericidae",
-                              "Psychomyiidae"                   = "Occurrence.Psychomyiidae",
-                              "Nematoda"                        = "Occurrence.Nematoda",
-                              "Hydraenidae"                     = "Occurrence.Hydraenidae",
-                              "Planariidae"                     = "Occurrence.Planariidae",
-                              "Sericostomatidae"                = "Occurrence.Sericostomatidae",
-                              "Tipulidae"                       = "Occurrence.Tipulidae",
-                              "Polycentropodidae"               = "Occurrence.Polycentropodidae",
-                              "Odontoceridae"                   = "Occurrence.Odontoceridae",
-                              "Dugesiidae"                      = "Occurrence.Dugesiidae",
-                              "Lymnaeidae"                      = "Occurrence.Lymnaeidae",
-                              "Erpobdellidae"                   = "Occurrence.Erpobdellidae",
-                              "Scirtidae"                       = "Occurrence.Scirtidae",
-                              "Ephemerellidae"                  = "Occurrence.Ephemerellidae",
-                              "Asellidae"                       = "Occurrence.Asellidae",
-                              "Ephemeridae"                     = "Occurrence.Ephemeridae",
-                              "Chloroperlidae"                  = "Occurrence.Chloroperlidae",
-                              "Dytiscidae"                      = "Occurrence.Dytiscidae",
-                              "Stratiomyidae"                   = "Occurrence.Stratiomyidae",
-                              "Hydroptilidae"                   = "Occurrence.Hydroptilidae",
-                              "Hydrobiidae"                     = "Occurrence.Hydrobiidae",
-                              "Perlidae"                        = "Occurrence.Perlidae",
-                              "Planorbidae"                     = "Occurrence.Planorbidae",
-                              "Glossosomatidae"                 = "Occurrence.Glossosomatidae",
-                              "Blephariceridae"                 = "Occurrence.Blephariceridae",
-                              "Glossiphoniidae"                 = "Occurrence.Glossiphoniidae",
-                              "Capniidae"                       = "Occurrence.Capniidae",
-                              "Goeridae"                        = "Occurrence.Goeridae",
-                              "Philopotamidae"                  = "Occurrence.Philopotamidae",
-                              "Dixidae"                         = "Occurrence.Dixidae",
-                              "Gyrinidae"                       = "Occurrence.Gyrinidae",
-                              "Caenidae"                        = "Occurrence.Caenidae",
-                              "Leptoceridae"                    = "Occurrence.Leptoceridae",
-                              "Calopterygidae"                  = "Occurrence.Calopterygidae",
-                              "Tabanidae"                       = "Occurrence.Tabanidae",
-                              "Pediciidae"                      = "Occurrence.Pediciidae",
-                              "Cordulegastridae"                = "Occurrence.Cordulegastridae",
-                              "Anthomyiidae"                    = "Occurrence.Anthomyiidae",
-                              "Lepidostomatidae"                = "Occurrence.Lepidostomatidae",
-                              "Physidae"                        = "Occurrence.Physidae",
-                              "Sialidae"                        = "Occurrence.Sialidae")
-
-# This subset is meant for increasing speed during testing.
-TAXA.COLNAMES.SMALL          <- c("Simuliidae"                  = "Occurrence.Simuliidae",
-                            "Gammaridae"                        = "Occurrence.Gammaridae")
+# ENV.FACT.MAP            <- c("Temperature"                      = "temperature",       # Temp
+#                              "Flow velocity"                    = "velocity",          # FV
+#                              "Riparian agriculture"             = "A10m",              # A10m
+#                              "Livestock unit density"           = "cow.density",       # LUD
+#                              "Insecticide application rate"     = "IAR",               # IAR
+#                              "Urban area"                       = "urban.area",        # Urban
+#                              "Forest-river intersection"        = "FRI",               # FRI
+#                              "Forest-river intersection buffer" = "bFRI",              # bFRI
+#                              "Width variability"                = "width.variability",
+#                              "Temperature squared"              = "temperature2",
+#                              "Velocity squared"                 = "velocity2")
+# 
+# 
+# TAXA.COLNAMES      <-  c("Simuliidae"                      = "Occurrence.Simuliidae",
+#                               "Oligochaeta"                     = "Occurrence.Oligochaeta",
+#                               "Limoniidae"                      = "Occurrence.Limoniidae",
+#                               "Limnephilidae"                   = "Occurrence.Limnephilidae",
+#                               "Rhyacophilidae"                  = "Occurrence.Rhyacophilidae",
+#                               "Elmidae"                         = "Occurrence.Elmidae",
+#                               "Gammaridae"                      = "Occurrence.Gammaridae",
+#                               "Heptageniidae"                   = "Occurrence.Heptageniidae",
+#                               "Nemouridae"                      = "Occurrence.Nemouridae",
+#                               "Empididae"                       = "Occurrence.Empididae",
+#                               "Hydropsychidae"                  = "Occurrence.Hydropsychidae",
+#                               "Leuctridae"                      = "Occurrence.Leuctridae",
+#                               "Ceratopogonidae"                 = "Occurrence.Ceratopogonidae",
+#                               "Prostigmata"                     = "Occurrence.Prostigmata",
+#                               "Psychodidae"                     = "Occurrence.Psychodidae",
+#                               "Leptophlebiidae"                 = "Occurrence.Leptophlebiidae",
+#                               "Sphaeriidae"                     = "Occurrence.Sphaeriidae",
+#                               "Taeniopterygidae"                = "Occurrence.Taeniopterygidae",
+#                               "Perlodidae"                      = "Occurrence.Perlodidae",
+#                               "Athericidae"                     = "Occurrence.Athericidae",
+#                               "Psychomyiidae"                   = "Occurrence.Psychomyiidae",
+#                               "Nematoda"                        = "Occurrence.Nematoda",
+#                               "Hydraenidae"                     = "Occurrence.Hydraenidae",
+#                               "Planariidae"                     = "Occurrence.Planariidae",
+#                               "Sericostomatidae"                = "Occurrence.Sericostomatidae",
+#                               "Tipulidae"                       = "Occurrence.Tipulidae",
+#                               "Polycentropodidae"               = "Occurrence.Polycentropodidae",
+#                               "Odontoceridae"                   = "Occurrence.Odontoceridae",
+#                               "Dugesiidae"                      = "Occurrence.Dugesiidae",
+#                               "Lymnaeidae"                      = "Occurrence.Lymnaeidae",
+#                               "Erpobdellidae"                   = "Occurrence.Erpobdellidae",
+#                               "Scirtidae"                       = "Occurrence.Scirtidae",
+#                               "Ephemerellidae"                  = "Occurrence.Ephemerellidae",
+#                               "Asellidae"                       = "Occurrence.Asellidae",
+#                               "Ephemeridae"                     = "Occurrence.Ephemeridae",
+#                               "Chloroperlidae"                  = "Occurrence.Chloroperlidae",
+#                               "Dytiscidae"                      = "Occurrence.Dytiscidae",
+#                               "Stratiomyidae"                   = "Occurrence.Stratiomyidae",
+#                               "Hydroptilidae"                   = "Occurrence.Hydroptilidae",
+#                               "Hydrobiidae"                     = "Occurrence.Hydrobiidae",
+#                               "Perlidae"                        = "Occurrence.Perlidae",
+#                               "Planorbidae"                     = "Occurrence.Planorbidae",
+#                               "Glossosomatidae"                 = "Occurrence.Glossosomatidae",
+#                               "Blephariceridae"                 = "Occurrence.Blephariceridae",
+#                               "Glossiphoniidae"                 = "Occurrence.Glossiphoniidae",
+#                               "Capniidae"                       = "Occurrence.Capniidae",
+#                               "Goeridae"                        = "Occurrence.Goeridae",
+#                               "Philopotamidae"                  = "Occurrence.Philopotamidae",
+#                               "Dixidae"                         = "Occurrence.Dixidae",
+#                               "Gyrinidae"                       = "Occurrence.Gyrinidae",
+#                               "Caenidae"                        = "Occurrence.Caenidae",
+#                               "Leptoceridae"                    = "Occurrence.Leptoceridae",
+#                               "Calopterygidae"                  = "Occurrence.Calopterygidae",
+#                               "Tabanidae"                       = "Occurrence.Tabanidae",
+#                               "Pediciidae"                      = "Occurrence.Pediciidae",
+#                               "Cordulegastridae"                = "Occurrence.Cordulegastridae",
+#                               "Anthomyiidae"                    = "Occurrence.Anthomyiidae",
+#                               "Lepidostomatidae"                = "Occurrence.Lepidostomatidae",
+#                               "Physidae"                        = "Occurrence.Physidae",
+#                               "Sialidae"                        = "Occurrence.Sialidae")
+# 
+# # This subset is meant for increasing speed during testing.
+# TAXA.COLNAMES.SMALL          <- c("Simuliidae"                  = "Occurrence.Simuliidae",
+#                             "Gammaridae"                        = "Occurrence.Gammaridae")
 
 TUNE.GRID.GLM          <- NULL # add tuning parameters for GLM here 
 
 TUNE.GRID.GAMLOESS     <- NULL # add tuning parameters for GamLoess here
 
-TUNE.GRID.RF           <- expand.grid(mtry                      = c(1,2,4,8))
+TUNE.GRID.RF           <- NULL
+# TUNE.GRID.RF           <- expand.grid(mtry                      = c(1,2,4,8))
 
 #TUNE.GRID.ANN          <- expand.grid(num.units                 = c(4, 8, 32),
 #                                      num.layers                = c(3, 5, 10),

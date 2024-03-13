@@ -53,8 +53,11 @@ create.plots <- function(experiment.name="experiment_name",
   dir.input.data  <- "../input_data/"
   prev.taxa       <- read.csv(paste0(dir.input.data, file.prev.taxa),
                               header = T, 
-                              sep = ",", 
+                              sep = ";", 
                               stringsAsFactors = F)
+  prev.taxa <- filter(prev.taxa, Occurrence.taxa %in% TAXA.COLNAMES)
+  
+  
   dir.output              <- "../output_data/"
   dir.experiment          <- paste0(dir.output, experiment.name, "/")
   
@@ -117,7 +120,9 @@ create.plots <- function(experiment.name="experiment_name",
   
   
   # Fig. 3 ----
-  env.fact.under.obs <- "temperature"
+  # env.fact.under.obs <- "temperature"
+  env.fact.under.obs <- "tempmaxC"
+  
   taxon.under.obs <- "Occurrence.Gammaridae"
   
   input.env.factors <- get.input.env.factors(experiment.name)
@@ -177,7 +182,7 @@ create.plots <- function(experiment.name="experiment_name",
     return(prevalence)
   })  
   
-  noised.prev.taxa <- prev.taxa  
+  noised.prev.taxa <- prev.taxa[which(prev.taxa$Occurrence.taxa %in% TAXA.COLNAMES),]  
   noised.prev.taxa[["Prevalence"]] <- noised.prevalence
   
   prev.taxa[["Status"]] <- "unnoised"

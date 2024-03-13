@@ -48,14 +48,16 @@ training.pipeline <- function(
   # Open data set ----
   data <- read.csv(paste0(dir.input.data, file.input.data),
                    header = T, 
-                   sep = ",", 
+                   sep = ";", 
                    stringsAsFactors = F)
+  
+  data[is.na(data)] <- 0 # replace NAs by 0
   
   prev.taxa <- read.csv(paste0(dir.input.data, file.prev.taxa),
                         header = T, 
-                        sep = ",", 
+                        sep = ";", 
                         stringsAsFactors = F)
-  
+  prev.taxa$Missing.values <- 0
   
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Add noise to data set ----
@@ -68,6 +70,7 @@ training.pipeline <- function(
   noised.data            <- noise.data.list[["noised data"]]
   ENV.FACT.COLNAMES      <- noise.data.list[["env fact"]]
   ENV.FACT.FULL.COLNAMES <- noise.data.list[["env fact full"]]
+  ENV.FACT.MAP <- ENV.FACT.COLNAMES
   
   assign("ENV.FACT.COLNAMES",
          ENV.FACT.COLNAMES,
@@ -81,10 +84,24 @@ training.pipeline <- function(
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # Preprocess dataset ----
   
+  # subselect taxa with intermediate prevalence (default threshold 0.05)
+  noised.data <- select.taxa.interm.prev(noised.data, prev.taxa, prev.threshold = 0.2)
+  
+  TAXA.COLNAMES <- colnames(noised.data)[which(grepl("Occurrence.", colnames(noised.data)))]
+  names(TAXA.COLNAMES) <- gsub("Occurrence.", "", TAXA.COLNAMES)
+  TAXA.COLNAMES.SMALL <- TAXA.COLNAMES[which(grepl("Gammaridae", TAXA.COLNAMES) |
+                                                 grepl("alpinus", TAXA.COLNAMES))]
+  
+  assign("TAXA.COLNAMES",
+         TAXA.COLNAMES,
+         envir = globalenv())  
+  
+  assign("TAXA.COLNAMES.SMALL",
+         TAXA.COLNAMES.SMALL,
+         envir = globalenv()) 
+  
   # Replace 0s and 1s in taxas' columns respectively by labels "absent"/"present"
   noised.data <- categorize.taxa.occurence(noised.data)
-  
-  
   
   # Split and standardize data
   preprocessed.data.cv  <- preprocess.data(data=noised.data,

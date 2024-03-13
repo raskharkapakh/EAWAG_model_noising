@@ -28,13 +28,14 @@ summarize.all.results <- function(models.data, prev.taxa){
   # get dataframe 
   all.results <- data.frame(prev.taxa) 
   
-  # remove useless columns
-  all.results <- all.results %>% select(-Missing.values) # remove useless col
-  
+  # # remove useless columns
+  # all.results <- all.results %>% select(-Missing.values) # remove useless col
+  # 
   # remove useless rows
   all.results <- all.results %>% filter(all.results$Occurrence.taxa %in% TAXA.COLNAMES)
   
-  # give appropriate names to columns
+  # keep only relevant columns and give them appropriate names
+  all.results <- all.results[c("Taxon", "Prevalence", "Taxonomic.level")]
   colnames(all.results) <- c('taxa','prevalence','taxonomic_level')
   
   # Change Occurence.taxaname to only taxaname

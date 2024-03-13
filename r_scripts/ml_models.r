@@ -333,9 +333,9 @@ get.best.hyperparameters <- function(data){
   
   # Get a list of all permutation of hyperparameters
   tune.grid <- TUNE.GRID[['ann']]
-  nb.folds  <- 3.0
+  nb.folds  <- 3
   
-  folds <- groupKFold(data$SiteId, nb.folds)
+  folds <- groupKFold(data$ReachID, nb.folds)
   
   sum.losses <- list(double(nrow(tune.grid)))
   
@@ -360,7 +360,7 @@ get.best.hyperparameters <- function(data){
   }
   
   # loss is average over all split
-  losses = lapply(sum.losses, FUN=function(x){x/nb.folds})
+  losses = lapply(sum.losses, FUN=function(x){x/3})
   # Get hyperparameter leading to smallest score
   index.lowest.loss <- which.min(losses)
   hyperparameters <- tune.grid[index.lowest.loss,]
@@ -561,9 +561,11 @@ apply.caret.model <- function(data, split.type, env.fact, model.name){
   if (split.type == 'FIT'){
     
     training.data <- na.omit(data[["Entire dataset"]])
+    folds.train <- data[["Folds train"]]
     models <- lapply(TAXA.COLNAMES,
                     FUN=train.caret.model,
                     training.data,
+                    folds.train,
                     env.fact,
                     model.name)
     
@@ -583,11 +585,13 @@ apply.caret.model <- function(data, split.type, env.fact, model.name){
       
       training.data <- na.omit(split[[1]])
       testing.data <- na.omit(split[[2]])  
+      folds.train <- split[["Folds train"]]
       
       # train
       train.models <- lapply(TAXA.COLNAMES,
                              FUN=train.caret.model,
                              training.data,
+                             folds.train,
                              env.fact,
                              model.name)
       
@@ -614,7 +618,7 @@ apply.caret.model <- function(data, split.type, env.fact, model.name){
   return(caret.models)
 }
 
-train.caret.model <- function(taxa, train.data, env.fact, method){
+train.caret.model <- function(taxa, train.data, folds.train, env.fact, method){
   
   
   # This function trains a caret machine learning model to predict a the 
@@ -645,14 +649,22 @@ train.caret.model <- function(taxa, train.data, env.fact, method){
   tune.grid <- TUNE.GRID[[method]]
   
   if (is.null(tune.grid)){
-    trainctrl <- trainControl(verboseIter = TRUE)
-  } 
-  else {
-    nb.folds <- 3
-    folds <- groupKFold(train.data$SiteId, nb.folds)
+    # trainctrl <- trainControl(verboseIter = TRUE)
     trainctrl <- trainControl(method='cv',                  
-                              number=nb.folds,                     
-                              index=folds,
+                              number= 3, #nb.folds,                     
+                              index=folds.train,
+                              classProbs=T,                 
+                              summaryFunction=standard.deviance,
+                              selectionFunction=lowest,
+                              # verboseIter=TRUE)
+                              verboseIter=F)
+
+  } else {
+    # nb.folds <- 3
+    # folds <- groupKFold(train.data$SiteId, nb.folds)
+    trainctrl <- trainControl(method='cv',                  
+                              number=3, #nb.folds,                     
+                              index=folds.train,
                               classProbs=T,                 
                               summaryFunction=standard.deviance,
                               selectionFunction=lowest,

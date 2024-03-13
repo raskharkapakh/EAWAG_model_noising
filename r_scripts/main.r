@@ -57,28 +57,55 @@ source("plotting.r")
 # Noise: baseline (no noise) ----
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # experiment variables
-file.input.data         <- "All_2729samples_9envfact_lme.area.elev_ModelInputs.csv"
-file.prev.taxa          <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
+# file.input.data         <- "All_2729samples_9envfact_lme.area.elev_ModelInputs.csv"
+# file.input.data         <- "8Catch_400Sites_Prev0.15_IntercToxSapro3_Shade_0.6_10Yea_3651Steps_WideData_ResultsPresAbs.csv"
+# file.prev.taxa          <- "All_2729samples_9envfact_lme.area.elev_PrevalenceTaxa.csv"
+
+name.streambugs.run <- "8Catch_160Sites_round.inv.traits0.1_adjust.curve-10_10Yea_3651Steps"
+file.input.data <- paste0(name.streambugs.run, "_WideData_ResultsThreshPresAbs.csv")
+file.prev.taxa <- paste0(name.streambugs.run, "_PrevalenceTaxonomy_ThreshPresAbs.csv")
+
 
 experiment.name         <- paste0("baseline_",
                                   format(Sys.time(), "%d_%m_%Y_%Hh%M"))
 number.split            <- 3
-split.criterion         <- "SiteId"
-number.sample           <- 10000
-models                  <- list("null", "glm", "gamloess", "rf", "ann")
-env.factor              <- c("Temperature"                      = "temperature",       # Temp
-                             "Flow velocity"                    = "velocity",          # FV
-                             "Riparian agriculture"             = "A10m",              # A10m
-                             "Livestock unit density"           = "cow.density",       # LUD
-                             "Insecticide application rate"     = "IAR",               # IAR
-                             "Urban area"                       = "urban.area",        # Urban
-                             "Forest-river intersection"        = "FRI",               # FRI
-                             "Forest-river intersection buffer" = "bFRI",              # bFRI
-                             "Width variability"                = "width.variability") # WV
+# split.criterion         <- "SiteId"
+split.criterion         <- "ReachID"
 
-env.factor.full         <- c(env.factor,
-                             "Temperature2"                     = "temperature2",
-                             "Velocity2"                        = "velocity2")
+number.sample           <- 1000
+models                  <- list("null", "glm", "gamloess", "rf")#,
+                                # "ann")
+# original environmental factors
+# env.factor              <- c("Temperature"                      = "temperature",       # Temp
+#                              "Flow velocity"                    = "velocity",          # FV
+#                              "Riparian agriculture"             = "A10m",              # A10m
+#                              "Livestock unit density"           = "cow.density",       # LUD
+#                              "Insecticide application rate"     = "IAR",               # IAR
+#                              "Urban area"                       = "urban.area",        # Urban
+#                              "Forest-river intersection"        = "FRI",               # FRI
+#                              "Forest-river intersection buffer" = "bFRI",              # bFRI
+#                              "Width variability"                = "width.variability") # WV
+# 
+# env.factor.full         <- c(env.factor,
+#                              "Temperature2"                     = "temperature2",
+#                              "Velocity2"                        = "velocity2")
+
+# all environmental factors streambugs
+# env.factor <- c("Temp_average", 
+#                 "tempmaxC", 
+#                 "L", "w", "I0", "shade",
+#                 "C_P", "C_N", "C_SusPOM", "currentms", 
+#                 "orgmicropollTU", 
+#                 "saprowqclass", "Lit_Inp" , 
+#                 "microhabaf_type1", "microhabaf_type2", "microhabaf_type3", "microhabaf_type4"
+# )
+
+# four direct environmental factors streambugs
+env.factor <- c("Temperature"      = "tempmaxC", 
+                "Flow velocity"    = "currentms", 
+                "Toxic units"      = "orgmicropollTU", 
+                "Saproby"          = "saprowqclass")
+env.factor.full <- env.factor
 
 noise1 <- list("type"       = "gaussian",
                "target"     = "temperature",

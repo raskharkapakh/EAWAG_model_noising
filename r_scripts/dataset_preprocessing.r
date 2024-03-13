@@ -1,4 +1,31 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Select taxa with intermediate prevalence ----
+
+select.taxa.interm.prev <- function(data, 
+                                    prev.taxa, 
+                                    prev.threshold = 0.05){
+    # This function returns the data with only the taxa having an intermediate prevalence.
+    #
+    # arguments:
+    #   - data: the dataframe where the taxa list should be subselcted by prevalence
+    #   - prev.taxa: the dataframe with the list of all taxa and their prevalence
+    #   - prev.threshold: a numeric between 0 and 1 used as threshold above/below 
+    #                     the taxa prevalence is selected
+    #
+    # returns:  
+    #   - data: the dataframe with only taxa with selected prevalence
+    
+    taxa.col.index = which(grepl("Occurrence.", colnames(data)))
+    data.info <- data[,-taxa.col.index]
+    prev.taxa.interm.prev <- prev.taxa[which(prev.taxa$Prevalence > prev.threshold &
+                                                prev.taxa$Prevalence < (1 - prev.threshold)), ]
+    vect.taxa.interm.prev <- prev.taxa.interm.prev[order(prev.taxa.interm.prev$Prevalence), "Occurrence.taxa"]
+    data <- cbind(data.info, data[,vect.taxa.interm.prev])
+    
+    return(data)
+} 
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Reorganizing data ----
 
 categorize.taxa.occurence <- function(data){
@@ -29,7 +56,7 @@ preprocess.data <- function(data,
                             dir,
                             split.type="FIT",
                             nb.split=3,
-                            splitting.criterion="SiteId"){
+                            splitting.criterion="ReachID"){
   
   # This function split the data according to a split.type. If split.type is
   # "CV", then the data get split in a 3-Fold for cross validation. If 
@@ -79,11 +106,12 @@ preprocess.data <- function(data,
     } else if (split.type=="ODG"){
       splits.const <- odg.preprocess.data(data, list.env.fact)
     } else { # FIT
-      splits.const <- fit.preprocess.data(data, list.env.fact)
+      splits.const <- fit.preprocess.data(data, list.env.fact, splitting.criterion)
     }
     
     splits <- splits.const[["splits"]]
     const  <- splits.const[["const"]]
+    folds.train <- splits.const[["folds.train"]]
     
     saveRDS(splits, file=split.file)
     saveRDS(const, file=const.file)
@@ -128,18 +156,18 @@ cv.preprocess.data <- function(data, env.fact, nb.split, splitting.criterion){
     train     <- train.test[["train"]]
     test      <- train.test[["test"]]
     std.const <- train.test[["const"]]
+    folds.train <- groupKFold(train[,splitting.criterion], 3)
     
     splits <- c(splits,
                 list(list("Training data" = train, 
-                          "Testing data" = test)))
+                          "Testing data"  = test,
+                          "Folds train"   = folds.train)))
     const <- c(const, list(std.const))
     
   } 
   
   names(splits) <- splits.names
   names(const) <- splits.names
-  
-  
   
   return(list("splits"=splits, "const"=const))
 }
@@ -155,7 +183,7 @@ odg.preprocess.data <- function(data, env.fact){
   return(list("splits"=splits, "const"=NULL))
 }
 
-fit.preprocess.data <- function(data, env.fact){
+fit.preprocess.data <- function(data, env.fact, splitting.criterion = "ReachID"){
   # This function standardizes the data when there is no split happening, i.e.
   # split.type = "FIT". This function is a subfunction of split.data
   
@@ -165,12 +193,13 @@ fit.preprocess.data <- function(data, env.fact){
                                 test=NULL)
   data.standardized <- train.test[["train"]]
   std.const         <- train.test[["const"]]
-  
+  folds       <- groupKFold(data[,splitting.criterion], 3)
   # TODO: save standardization const to file
   
-  splits <- list("Entire dataset" = data.standardized)
+  splits <- list("Entire dataset" = data.standardized,
+                 "Folds train"    = folds)
   const  <- list("Entire dataset" = std.const)
-  
+
   return(list("splits"=splits, "const"=const))
 }
 
